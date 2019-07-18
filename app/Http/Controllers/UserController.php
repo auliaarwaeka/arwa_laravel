@@ -25,9 +25,20 @@ class UserController extends Controller
             'name'=>'required|between:3,100',
             'email'=>'required|unique:users,email,',
             'password'=>'required|min:6',
-            'repassword'=>'same:password',
+            'repassword'=>'required|same:password',
             'akses'=>'required',
         ])->validate();
-    	return 'Fungsi Save';
+    	
+        $result = new User;
+        $result->name = $req->name;
+        $result->email = $req->email;
+        $result->password = bcrypt($req->password);
+        $result->akses = $req->akses;
+
+        if($result->save()){
+            return redirect()->route('admin.user')->with('result','success');
+        } else {
+            return back()->with('result','fail')->withInput();
+        }
    }
 }
